@@ -128,7 +128,7 @@ class TransformerEncoderLayerBase(nn.Module):
             self.int_version = (
                 int(self.torch_version[0]) * 1000
                 + int(self.torch_version[1]) * 10
-                + int(self.torch_version[2])
+                # + int(self.torch_version[2])
             )
             if len(self.torch_version) == 3:
                 if self.int_version >= 1120:

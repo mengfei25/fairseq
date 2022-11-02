@@ -27,11 +27,6 @@ function main {
     for model_name in ${model_name_list[@]}
     do
         # cache
-        if [ "${device}" != "cuda" ];then
-            device_id='cpu'
-        else
-            device_id=$(nvidia-smi -L | grep "$CUDA_VISIBLE_DEVICES" -B 50 |grep '^GPU' |tail -1 |sed 's/:.*//;s/[^0-9]//g')
-        fi
         fairseq-generate ${DATASET_DIR} \
             --config-yaml config_st.yaml --gen-subset test_es-fr_st --task speech_to_text \
             --prefix-size 1 --max-tokens 40000 --beam 5 \
@@ -77,7 +72,6 @@ function generate_core {
             OOB_EXEC_HEADER+=" -C $(echo ${device_array[i]} |awk -F ';' '{print $1}') "
         else
             OOB_EXEC_HEADER=" CUDA_VISIBLE_DEVICES=${device_array[i]} "
-            device_id=$(nvidia-smi -L | grep "$CUDA_VISIBLE_DEVICES" -B 50 |grep '^GPU' |tail -1 |sed 's/:.*//;s/[^0-9]//g')
         fi
         printf " ${OOB_EXEC_HEADER} \
             fairseq-generate ${DATASET_DIR} \

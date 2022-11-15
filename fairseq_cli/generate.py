@@ -255,6 +255,7 @@ def _main(cfg: DictConfig, output_file):
                     constraints=constraints,
                 )
                 num_generated_tokens = sum(len(h[0]["tokens"]) for h in hypos)
+                if torch.cuda.is_available(): torch.cuda.synchronize()
                 p.step()
                 gen_timer.stop(num_generated_tokens)
                 print("Iteration: {}, inference time: {} sec.".format(num_sentences, gen_timer.avg), flush=True)
@@ -446,6 +447,7 @@ def _main(cfg: DictConfig, output_file):
                 constraints=constraints,
             )
             num_generated_tokens = sum(len(h[0]["tokens"]) for h in hypos)
+            if torch.cuda.is_available(): torch.cuda.synchronize()
             gen_timer.stop(num_generated_tokens)
             print("Iteration: {}, inference time: {} sec.".format(num_sentences, gen_timer.avg), flush=True)
 
@@ -618,7 +620,7 @@ def _main(cfg: DictConfig, output_file):
             1.0 / gen_timer.avg,
         )
     )
-    print("inference Throughput: {:.6f} tokens/s".format(1.0 / gen_timer.avg))
+    print("inference Throughput: {} tokens/s".format(1.0 / gen_timer.avg))
     if has_target:
         if cfg.bpe and not cfg.generation.sacrebleu:
             if cfg.common_eval.post_process:
